@@ -1,7 +1,7 @@
 const axios = require('axios');
 const moment = require('moment');
 
-const API_KEY = '[FILL IN YOUR API KEY]';
+const { API_KEY } = require('./secrets');
 const COMMUNITY_IDENTIFIER = 'flitedek'
 
 const challongeApi = axios.create({
