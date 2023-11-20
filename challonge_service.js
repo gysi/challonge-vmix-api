@@ -129,8 +129,8 @@ async function getCurrentTournamentMatches({ tournamentId = null, participants =
     	//sets
     	const sets = matches[i].attributes.score_in_sets;
     	for(let s = 0; s < sets.length; s++){
-    		match[`set${s+1}_1`] = ${sets[s][0]}
-        match[`set${s+1}_2`] = ${sets[s][1]}
+        match[`set${s+1}_1`] = ${sets[s][0]};
+        match[`set${s+1}_2`] = ${sets[s][1]};
     	}
     	match.winner = participantsById[matches[i].attributes.winner_id];
     	result.push(match);
