@@ -123,13 +123,14 @@ async function getCurrentTournamentMatches({ tournamentId = null, participants =
     	match.round = matches[i].attributes.round;
     	match.identifier = matches[i].attributes.identifier;
     	match.scores = matches[i].attributes.scores;
-    	match.suggested_player_order = matches[i].attributes.suggested_play_order;
+    	match.suggested_play_order = matches[i].attributes.suggested_play_order;
     	match.participant1 = participantsById[matches[i].attributes.points_by_participant[0].participant_id];
     	match.participant2 = participantsById[matches[i].attributes.points_by_participant[1].participant_id];
     	//sets
     	const sets = matches[i].attributes.score_in_sets;
     	for(let s = 0; s < sets.length; s++){
-    		match[`set${s+1}`] = `${sets[s][0]} - ${sets[s][1]}`
+    		match[`set${s+1}_1`] = ${sets[s][0]}
+        match[`set${s+1}_2`] = ${sets[s][1]}
     	}
     	match.winner = participantsById[matches[i].attributes.winner_id];
     	result.push(match);
