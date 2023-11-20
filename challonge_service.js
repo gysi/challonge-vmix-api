@@ -71,6 +71,79 @@ async function getCommunityTournaments({ page = 1, perPage = 25, showOnlyCurrent
   }
 }
 
+async function getCurrentCommunityTournamentParticipants({ tournamentId = null, page = 1, perPage = 25 } = {}) {
+  try {
+  	let result = [];
+    const response = await challongeApi.get(`/communities/${COMMUNITY_IDENTIFIER}/tournaments/${tournamentId}/participants.json`, {
+      params: {
+        page: page,
+        per_page: perPage,
+      }
+    });
+    
+    let participants = response.data.data;
+    for (let i = 0; i < participants.length; i++) {
+    	let participant = {};
+    	participant.id = participants[i].id;
+    	participant.name = participants[i].attributes.name;
+    	result.push(participant);
+    }
+    
+   	return result;
+  } catch (error) {
+    console.error('Error fetching participants:', error);
+    throw error;
+  }
+}
+
+async function getCurrentTournamentMatches({ tournamentId = null, participants = null, page = 1, perPage = 25 } = {}) {
+  try {
+  	let result = [];
+  	const participantsByIdFunc = (array) => {
+	    const lookupObject = {};
+	    array.forEach(item => {
+	        lookupObject[item.id] = item.name;
+	    });
+	    return lookupObject;
+	}
+	participantsById = participantsByIdFunc(participants);
+
+    const response = await challongeApi.get(`/communities/${COMMUNITY_IDENTIFIER}/tournaments/${tournamentId}/matches.json`, {
+      params: {
+        page: page,
+        per_page: perPage,
+      }
+    });
+    
+    let matches = response.data.data;
+    for (let i = 0; i < matches.length; i++) {
+    	let match = {};
+    	match.id = matches[i].id;
+    	match.state = matches[i].attributes.state;
+    	match.round = matches[i].attributes.round;
+    	match.identifier = matches[i].attributes.identifier;
+    	match.scores = matches[i].attributes.scores;
+    	match.suggested_player_order = matches[i].attributes.suggested_play_order;
+    	match.participant1 = participantsById[matches[i].attributes.points_by_participant[0].participant_id];
+    	match.participant2 = participantsById[matches[i].attributes.points_by_participant[1].participant_id];
+    	//sets
+    	const sets = matches[i].attributes.score_in_sets;
+    	for(let s = 0; s < sets.length; s++){
+    		match[`set${s+1}`] = `${sets[s][0]} - ${sets[s][1]}`
+    	}
+    	match.winner = participantsById[matches[i].attributes.winner_id];
+    	result.push(match);
+    }
+    
+   	return result;
+  } catch (error) {
+    console.error('Error fetching matches:', error);
+    throw error;
+  }
+}
+
 module.exports = {
-  getCommunityTournaments
+  getCommunityTournaments,
+  getCurrentCommunityTournamentParticipants,
+  getCurrentTournamentMatches,
 };

@@ -17,3 +17,5 @@ Download this git repository to a directory.
 ## Current Endpoints:
 * http://localhost:3000/community-tournaments
 * http://localhost:3000/current-community-tournament
+* http://localhost:3000/current-community-tournament-participants
+* http://localhost:3000/current-community-tournament-matches

@@ -3,7 +3,7 @@ const path = require('path');
 
 const configPath = path.join(__dirname, 'secrets.js');
 
-// Check if config.js exists
+// Check if secrets.js exists
 if (!fs.existsSync(configPath)) {
     throw new Error('Configuration file "secrets.js" is missing. Please create the file based on "secrets.template.js" and add your API key.');
 }
@@ -33,13 +33,31 @@ app.get('/current-community-tournament', async (req, res) => {
   }
 });
 
-app.get('/current-community-tournament', async (req, res) => {
+app.get('/current-community-tournament-participants', async (req, res) => {
   try {
-    const tournaments = await challongeService.getCommunityTournaments({ showOnlyCurrent: true });
-    res.json(tournaments);
+    const tournament = (await challongeService.getCommunityTournaments({ showOnlyCurrent: true }))[0];
+    const participants = await challongeService.getCurrentCommunityTournamentParticipants({
+        tournamentId: tournament.id 
+    });
+    res.json(participants);
   } catch (error) {
-    console.log('Error occurred while fetching tournaments', error);
-    res.status(500).send('Error occurred while fetching tournaments');
+    console.log('Error occurred while fetching current community tournament matches', error);
+    res.status(500).send('Error occurred while fetching current community tournament matches');
+  }
+});
+
+app.get('/current-community-tournament-matches', async (req, res) => {
+  try {
+    const tournament = (await challongeService.getCommunityTournaments({ showOnlyCurrent: true }))[0];
+    const participants = (await challongeService.getCurrentCommunityTournamentParticipants({ tournamentId: tournament.id }));
+    const matches = await challongeService.getCurrentTournamentMatches({ 
+        tournamentId: tournament.id, 
+        participants: participants,
+    });
+    res.json(matches);
+  } catch (error) {
+    console.log('Error occurred while fetching current community tournament matches', error);
+    res.status(500).send('Error occurred while fetching current community tournament matches');
   }
 });
 
